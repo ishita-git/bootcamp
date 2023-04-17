@@ -4,17 +4,18 @@ import Button from '../UI/Button/Button';
 
 import Card from '../UI/Card/Card';
 import classes from './CreateNote.module.css';
+import { Editor } from './Editor';
+
+
 
 const CreateNote = (props) => {
 
   const authCtx = useContext(AuthContext);
 
   return (
-    <Card className={classes.create}>
-      <h1>Rich text Editor</h1>
-    
-    
-    </Card>
+
+    <div className={classes.editor_container}> <Editor/></div>
+
   );
 };
 

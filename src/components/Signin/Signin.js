@@ -66,23 +66,26 @@ const Signin = (props) => {
 
   const fetchData = async () => {
     try {
-      const formdata = new FormData();
-      formdata.append("username", usernameState.value);
-      formdata.append("password", passwordState.value);
+
 
       let rawdata = await fetch("http://localhost:8080/api/auth/signin", {
         method: "POST",
-        headers: {},
-        body: formdata
+        headers: {
+         "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+           "username" : usernameState.value,
+           "password" : passwordState.value
+        })
+
       });
       let data = await rawdata.json();
 
       console.log(data);
-    } catch (e) {
+     } catch (e) {
       console.log(e);
     }
   };
-
   const submitHandler = (event) => {
     event.preventDefault();
     fetchData();
