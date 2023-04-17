@@ -32,7 +32,7 @@ const passwordReducer = (state, action) => {
   return { value: "", isValid: false };
 };
 
-const nameReducer = (state , action) =>{
+const nameReducer = (state, action) => {
   if (action.type === "USER_INPUT") {
     return { value: action.val, isValid: action.val.trim().length > 1 };
   }
@@ -40,9 +40,13 @@ const nameReducer = (state , action) =>{
     return { value: state.value, isValid: state.value.trim().length > 1 };
   }
   return { value: "", isValid: false };
-}
+};
 
 const Login = (props) => {
+  
+  const {setSignin} = props;
+  console.log(props)
+  console.log(setSignin)
   // const [enteredEmail, setEnteredEmail] = useState('');
   // const [emailIsValid, setEmailIsValid] = useState();
   // const [enteredPassword, setEnteredPassword] = useState('');
@@ -59,10 +63,10 @@ const Login = (props) => {
     isValid: null,
   });
 
-  const [nameState , dispatchName] = useReducer(nameReducer, {
-     value:"",
-     isValid: null
-  })
+  const [nameState, dispatchName] = useReducer(nameReducer, {
+    value: "",
+    isValid: null,
+  });
 
   const authCtx = useContext(AuthContext);
 
@@ -75,7 +79,7 @@ const Login = (props) => {
 
   const { isValid: emailIsValid } = emailState;
   const { isValid: passwordIsValid } = passwordState;
-  const {isValid: nameIsValid} = nameState;
+  const { isValid: nameIsValid } = nameState;
 
   useEffect(() => {
     const identifier = setTimeout(() => {
@@ -89,12 +93,17 @@ const Login = (props) => {
     };
   }, [emailIsValid, passwordIsValid]);
 
-  
   const fetchData = async () => {
     try {
-      let rawdata = await fetch(
-       'http://localhost:8080/api/auth/signup'
-      );
+      const formdata = new FormData();
+      formdata.append("username", nameState.value);
+      formdata.append("email", emailState.value);
+      formdata.append("password", passwordState.value);
+      let rawdata = await fetch("http://localhost:8080/api/auth/signup", {
+        method: "POST",
+        headers: {},
+        body: formdata,
+      });
       let data = await rawdata.json();
 
       console.log(data);
@@ -102,8 +111,6 @@ const Login = (props) => {
       console.log(e);
     }
   };
-
- 
 
   const emailChangeHandler = (event) => {
     dispatchEmail({ type: "USER_INPUT", val: event.target.value });
@@ -117,10 +124,14 @@ const Login = (props) => {
     setFormIsValid(emailState.isValid && event.target.value.trim().length > 6);
   };
 
-  const nameChangeHandler = (event) =>{
-    dispatchName({ type: "USER_INPUT", val: event.target.value })
-    setFormIsValid(emailState.isValid && passwordState.isValid && event.target.value.trim().length > 1);
-  }
+  const nameChangeHandler = (event) => {
+    dispatchName({ type: "USER_INPUT", val: event.target.value });
+    setFormIsValid(
+      emailState.isValid &&
+        passwordState.isValid &&
+        event.target.value.trim().length > 1
+    );
+  };
 
   const validateEmailHandler = () => {
     // setEmailIsValid(emailState.isValid);
@@ -143,73 +154,79 @@ const Login = (props) => {
     fetchData();
 
     if (formIsValid) {
-      authCtx.onLogin(emailState.value, passwordState.value);
+      authCtx.onLogin(emailState.value, passwordState.value, nameState.value);
     } else if (!emailIsValid) {
       emailInputRef.current.focus();
-    } else if(!passwordIsValid) {
+    } else if (!passwordIsValid) {
       passwordInputRef.current.focus();
-     
-    }
-    else{
-      nameInputRef.current.focus()
+    } else {
+      nameInputRef.current.focus();
     }
   };
 
+  const signinHandler = () =>{
+    setSignin(true)
+    console.log(props.signinclick)
+  }
+
   return (
     <>
-    <Card className={classes.login}>
-      <form onSubmit={submitHandler}>
-        <Input ref={nameInputRef}
-         id="name" 
-         label="Name" 
-         type="text"
-         isValid={nameIsValid}
-         value={nameState.value} 
-         onChange={nameChangeHandler}
-         onBlur={validateNameHandler}/>
+      <Card className={classes.login}>
+        <form onSubmit={submitHandler}>
+          <Input
+            ref={nameInputRef}
+            id="name"
+            label="Name"
+            type="text"
+            isValid={nameIsValid}
+            value={nameState.value}
+            onChange={nameChangeHandler}
+            onBlur={validateNameHandler}
+          />
 
-        <Input
-          ref={usernameInputRef}
-          id="username"
-          label="User Name"
-          type="text"
-        />
-        <Input ref={ageInputRef} id="age" label="Age" type="text" />
-        <Input ref={genderInputRef} id="gender" label="Gender" type="text" />
-        <Input
-          ref={emailInputRef}
-          id="email"
-          label="E-mail"
-          type="email"
-          isValid={emailIsValid}
-          value={emailState.value}
-          onChange={emailChangeHandler}
-          onBlur={validateEmailHandler}
-        />
+          <Input
+            ref={usernameInputRef}
+            id="username"
+            label="User Name"
+            type="text"
+          />
+          <Input ref={ageInputRef} id="age" label="Age" type="text" />
+          <Input ref={genderInputRef} id="gender" label="Gender" type="text" />
+          <Input
+            ref={emailInputRef}
+            id="email"
+            label="E-mail"
+            type="email"
+            isValid={emailIsValid}
+            value={emailState.value}
+            onChange={emailChangeHandler}
+            onBlur={validateEmailHandler}
+          />
 
-        <Input
-          ref={passwordInputRef}
-          id="password"
-          label="Password"
-          type="password"
-          isValid={passwordIsValid}
-          value={passwordState.value}
-          onChange={passwordChangeHandler}
-          onBlur={validatePasswordHandler}
-        />
-        <div className={classes.actions}>
-          <Button type="submit" className={classes.btn}>
-            Signin
-          </Button>
-
-          
-        </div>
-      </form>
-
-    
-    </Card>
-
- </>
+          <Input
+            ref={passwordInputRef}
+            id="password"
+            label="Password"
+            type="password"
+            isValid={passwordIsValid}
+            value={passwordState.value}
+            onChange={passwordChangeHandler}
+            onBlur={validatePasswordHandler}
+          />
+          <div className={classes.actions}>
+            <Button type="submit" className={classes.btn}>
+              Signup
+            </Button>
+            <br />
+          </div>
+          <div className={classes.actions}>
+            <span>
+              Already signed up?<a onClick={signinHandler} href="/signin">Login</a>
+            </span>
+          </div>
+        </form>
+      </Card>
+    </>
   );
 };
 
