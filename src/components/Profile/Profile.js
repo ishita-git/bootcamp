@@ -5,6 +5,7 @@ import ProfilePicture from "@dsalvagni/react-profile-picture"
 
 import Card from '../UI/Card/Card';
 import classes from './Profile.module.css';
+import ProfilePic from './ProfilePic';
 
 const Profile = ({name}) => {
 
@@ -16,11 +17,12 @@ const Profile = ({name}) => {
     <Card className={classes.profile}>
       <h1>Profile</h1>
 
-      <ProfilePicture
+        <ProfilePicture
       ref={profilePictureRef}
      
      
-    />
+    />  
+    {/* <ProfilePic/> */}
     <br/>
      
      <a href=''>Edit Profile</a>
