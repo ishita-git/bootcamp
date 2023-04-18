@@ -81,11 +81,15 @@ const Signin = (props) => {
       });
       let data = await rawdata.json();
 
-      console.log(data);
+      console.log(data.token);
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('username', data.username);
+      
      } catch (e) {
       console.log(e);
     }
   };
+
   const submitHandler = (event) => {
     event.preventDefault();
     fetchData();

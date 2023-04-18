@@ -155,6 +155,7 @@ const Login = (props) => {
 
     if (formIsValid) {
       authCtx.onLogin(emailState.value, passwordState.value, nameState.value);
+      alert('user signed in')
     } else if (!emailIsValid) {
       emailInputRef.current.focus();
     } else if (!passwordIsValid) {

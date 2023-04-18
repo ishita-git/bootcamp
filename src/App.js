@@ -9,6 +9,7 @@ import Profile from './components/Profile/Profile';
 import PublicNotes from './components/PublicNotes/PublicNotes';
 import CreateNote from './components/CreateNote/CreateNote';
 import Signin from './components/Signin/Signin';
+import Mynotes from './components/Mynotes/Mynotes';
 
 function App() {
   const ctx = useContext(AuthContext);
@@ -24,6 +25,7 @@ function App() {
         <Routes>
           <Route exact path="/profile"element={ctx.isLoggedIn &&<Profile/>}/>
           <Route exact path="/publicnotes"element={ctx.isLoggedIn &&<PublicNotes/>}/>
+          <Route exact path="/publicnotes"element={ctx.isLoggedIn &&<Mynotes/>}/>
           <Route exact path="/createnotes"element={ctx.isLoggedIn &&<CreateNote/>}/>
           <Route exact path="/signin" element={ !ctx.isLoggedIn && <Signin />}/>
           <Route exact path="/login" element={!ctx.isLoggedIn && <Login />}/>

@@ -24,6 +24,11 @@ const Navigation = (props) => {
                 <a href="/createnotes">Create Note</a>
               </li>
             )}
+             {ctx.isLoggedIn && (
+              <li>
+                <a href="/mynotes">My Notes</a>
+              </li>
+            )}
             {ctx.isLoggedIn && (
               <li>
                 <button onClick={ctx.onLogout}>Logout</button>
