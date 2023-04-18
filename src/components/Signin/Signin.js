@@ -75,7 +75,7 @@ const Signin = (props) => {
         },
         body: JSON.stringify({
            "username" : usernameState.value,
-           "password" : passwordState.value
+           "password" : passwordState.value,
         })
 
       });
@@ -84,7 +84,7 @@ const Signin = (props) => {
       console.log(data.token);
       localStorage.setItem('token', data.token);
       localStorage.setItem('username', data.username);
-      
+
      } catch (e) {
       console.log(e);
     }

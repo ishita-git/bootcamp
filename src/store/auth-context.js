@@ -3,7 +3,7 @@ import React, {useState, useEffect} from "react";
 const AuthContext = React.createContext({
     isLoggedIn: false,
     onLogout : ()=>{},
-    onLogin : (name,email , password)=> {
+    onLogin : (name,email , password,age,gender)=> {
     
    
     },
@@ -25,7 +25,7 @@ export const AuthContextProvider = (props)=>{
         localStorage.removeItem('isLoggedIn');
         setIsLoggedIn(false);
     }
-    const loginHandler =(email, password, name) => {
+    const loginHandler =(email, password, name,age,gender) => {
         localStorage.setItem('isLoggedIn','1');
         // setIsLoggedIn(true);
         console.log(email, name)

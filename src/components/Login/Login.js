@@ -42,15 +42,33 @@ const nameReducer = (state, action) => {
   return { value: "", isValid: false };
 };
 
+const ageReducer = (state, action) => {
+  if (action.type === "USER_INPUT") {
+    return { value: action.val, isValid: action.val > 1 };
+  }
+  if (action.type === "INPUT_BLUR") {
+    return { value: state.value, isValid: state.val.length > 1 };
+  }
+  return { value: "", isValid: false };
+};
+
+const genderReducer = (state, action) => {
+  if (action.type === "USER_INPUT") {
+    return { value: action.val, isValid: action.val > 1 };
+  }
+  if (action.type === "INPUT_BLUR") {
+    return { value: state.value, isValid: state.val.length > 1 };
+  }
+  return { value: "", isValid: false };
+};
+
+
+
 const Login = (props) => {
+  const { setSignin } = props;
+  console.log(props);
+  console.log(setSignin);
   
-  const {setSignin} = props;
-  console.log(props)
-  console.log(setSignin)
-  // const [enteredEmail, setEnteredEmail] = useState('');
-  // const [emailIsValid, setEmailIsValid] = useState();
-  // const [enteredPassword, setEnteredPassword] = useState('');
-  // const [passwordIsValid, setPasswordIsValid] = useState();
   const [formIsValid, setFormIsValid] = useState(false);
 
   const [emailState, dispatchEmail] = useReducer(emailReducer, {
@@ -64,6 +82,16 @@ const Login = (props) => {
   });
 
   const [nameState, dispatchName] = useReducer(nameReducer, {
+    value: "",
+    isValid: null,
+  });
+
+  const [ageState, dispatchAge] = useReducer(ageReducer, {
+    value: "",
+    isValid: null,
+  });
+
+  const [genderState, dispatchGender] = useReducer(genderReducer, {
     value: "",
     isValid: null,
   });
@@ -99,6 +127,9 @@ const Login = (props) => {
       formdata.append("username", nameState.value);
       formdata.append("email", emailState.value);
       formdata.append("password", passwordState.value);
+      formdata.append("age",ageState.value);
+      formdata.append("gender",genderState.value);
+      
       let rawdata = await fetch("http://localhost:8080/api/auth/signup", {
         method: "POST",
         headers: {},
@@ -133,6 +164,24 @@ const Login = (props) => {
     );
   };
 
+  const ageChangeHandler = (event) => {
+    dispatchAge({ type: "USER_INPUT", val: event.target.value });
+    setFormIsValid(
+      emailState.isValid &&
+        passwordState.isValid &&
+        event.target.value > 1
+    );
+  };
+
+  const genderChangeHandler = (event) => {
+    dispatchGender({ type: "USER_INPUT", val: event.target.value });
+    setFormIsValid(
+      emailState.isValid &&
+        passwordState.isValid &&
+        event.target.value > 1
+    );
+  };
+
   const validateEmailHandler = () => {
     // setEmailIsValid(emailState.isValid);
     dispatchEmail({ type: "INPUT_BLUR" });
@@ -155,7 +204,7 @@ const Login = (props) => {
 
     if (formIsValid) {
       authCtx.onLogin(emailState.value, passwordState.value, nameState.value);
-      alert('user signed in')
+      alert("user signed in");
     } else if (!emailIsValid) {
       emailInputRef.current.focus();
     } else if (!passwordIsValid) {
@@ -165,10 +214,10 @@ const Login = (props) => {
     }
   };
 
-  const signinHandler = () =>{
-    setSignin(true)
-    console.log(props.signinclick)
-  }
+  const signinHandler = () => {
+    setSignin(true);
+    console.log(props.signinclick);
+  };
 
   return (
     <>
@@ -191,8 +240,22 @@ const Login = (props) => {
             label="User Name"
             type="text"
           />
-          <Input ref={ageInputRef} id="age" label="Age" type="text" />
-          <Input ref={genderInputRef} id="gender" label="Gender" type="text" />
+          <Input
+            ref={ageInputRef}
+            id="age"
+            label="Age"
+            type="text"
+            value={ageState.value}
+            onChange={ageChangeHandler}
+          />
+          <Input
+            ref={genderInputRef}
+            id="gender"
+            label="Gender"
+            type="text"
+            value={genderState.value}
+            onChange={genderChangeHandler}
+          />
           <Input
             ref={emailInputRef}
             id="email"
@@ -222,7 +285,10 @@ const Login = (props) => {
           </div>
           <div className={classes.actions}>
             <span>
-              Already signed up?<a onClick={signinHandler} href="/signin">Login</a>
+              Already signed up?
+              <a onClick={signinHandler} href="/signin">
+                Login
+              </a>
             </span>
           </div>
         </form>
