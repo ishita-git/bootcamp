@@ -7,6 +7,19 @@ import Card from '../UI/Card/Card';
 import classes from './Profile.module.css';
 import ProfilePic from './ProfilePic';
 
+const fetchData = async () => {
+  try {
+  
+ 
+    let rawdata = await fetch("http://localhost:8080/api/note/home");
+    let data = await rawdata.json();
+
+    console.log(data);
+  } catch (e) {
+    console.log(e);
+  }
+};
+
 const Profile = ({name}) => {
 
   const authCtx = useContext(AuthContext);

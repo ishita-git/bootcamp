@@ -19,6 +19,13 @@ export function Editor() {
   const editorDom = useRef(null);
   const [htmlData, setHtmlData] = useState("");
 
+  const [visibility, setVisibility] = useState("public");
+
+  function onChangeValue(event) {
+    setVisibility(event.target.value);
+    console.log(event.target.value);
+  }
+
   useEffect(() => {
     if (editorRef.current) return;
     const doc = DOMParser.fromSchema(mySchema).parse(editorDom.current);
@@ -35,25 +42,35 @@ export function Editor() {
     setHtmlData(editorRef.current.dom);
   }, [editorRef.current]);
 
-  const extractContent = (htmlData) =>{
-    var span = document.createElement('span');
-    span.innerHTML = htmlData;
-    return span.textContent || span.innerText;
-  }
+var getString = (function() {
+  var DIV = document.createElement("div");
+
+  if ('outerHTML' in DIV)
+    return function(node) {
+      return node.outerHTML;
+    };
+
+  return function(node) {
+    var div = DIV.cloneNode();
+    div.appendChild(node.cloneNode(true));
+    return div.innerHTML;
+  };
+
+})();
+
   const fetchData = async () => {
     try {
       const formdata = new FormData();
-     extractContent(htmlData);
-      formdata.append("description", htmlData );
-      console.log(formdata)
-  
+      formdata.append("description", getString(htmlData));
       let rawdata = await fetch("http://localhost:8080/api/note/create-note", {
         method: "POST",
-        headers: {},
+        headers: {
+          'Authorization' : `Bearer ${localStorage.getItem('token')}`,
+        },
         body: formdata,
       });
       let data = await rawdata.json();
-  
+
       console.log(data);
     } catch (e) {
       console.log(e);
@@ -62,13 +79,17 @@ export function Editor() {
 
   const handleExtractHtml = () => {
     fetchData();
-    console.log(htmlData);
+
   };
 
   return (
     <div>
-      <div id="editor" ref={editorDom} />
-      <button onClick={handleExtractHtml}>Extract HTML</button>
+      <div id="editor" ref={editorDom} />     
+      <div onChange={onChangeValue}>
+      <button onClick={handleExtractHtml}>Publish Note</button>
+      <input type="radio" value="public" name="visibility" checked={visibility === "public"} /> Public
+      <input type="radio" value="private" name="visibility" checked={visibility === "private"}/> Private
+    </div>
     </div>
   );
 }
